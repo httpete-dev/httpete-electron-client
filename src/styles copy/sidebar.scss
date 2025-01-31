@@ -1,0 +1,28 @@
+.method {
+    padding-left:5px;
+    padding-right:5px;
+    padding-top:2px;
+    padding-bottom:2px;
+    border-radius: 8px;
+    color: white;
+}
+
+.post {
+    background-color: #d85e1c;
+}
+
+.get {
+    background-color: #0c8d33;
+}
+
+.patch {
+    background-color: #214ebe;
+}
+
+.put {
+    background-color: #214ebe;
+}
+
+.delete {
+    background-color: #be2b21;
+}

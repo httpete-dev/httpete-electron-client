@@ -1,10 +1,10 @@
 import Navbar from "@/components/layout/navbar";
 
  
-export default function DashboardLayout({ children }) {
+export default function SettingsLayout({ children }) {
   return (
     <>
-      <Navbar title="Dashboard" isMobile={false} />
+      <Navbar title={"Settings"} isMobile={false} />
       <main>{children}</main>
     </>
   )
