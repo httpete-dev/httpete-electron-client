@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image"
-import { ChevronDown, Code, File, Globe, LogOut, LogOutIcon, Menu, Settings, User, Users } from "lucide-react"
+import { ChevronDown, Code, File, GitBranch, Globe, LogOut, LogOutIcon, Menu, Settings, SquareCheck, User, Users } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Button } from "../ui/button"
@@ -24,9 +24,11 @@ type HeaderProps = {
 
 const menuEntries = [
     // { title: 'Code', icon: <Code className="w-5 h-5 text-white" />, path: '/dashboard/code' },
-    { title: 'API', icon: <Globe className="w-5 h-5 text-white" />, path: '/dashboard/api-client' },
+    { title: 'Tasks', icon: <SquareCheck className="w-5 h-5 text-white" />, path: '/dashboard/tasks' },
     { title: 'Documentation', icon: <File className="w-5 h-5 text-white" />, path: '/dashboard/docs' },
-    { title: 'Community', icon: <Users className="w-6 h-6 text-white" />, path: '/dashboard/community' },
+    { title: 'API', icon: <Globe className="w-5 h-5 text-white" />, path: '/dashboard/api-client' },
+    { title: 'Source Control', icon: <GitBranch className="w-5 h-5 text-white" />, path: '/dashboard/source-control' },
+    // { title: 'Community', icon: <Users className="w-6 h-6 text-white" />, path: '/dashboard/community' },
     { title: 'Settings', icon: <Settings className="w-5 h-5 text-white" />, path: '/settings' },
     // { title: 'Sign out', icon: <LogOutIcon className="w-6 h-6 text-white" />, path: '/sign-out' }
 ]
