@@ -1,6 +1,6 @@
 'use client'
 import { ChevronLeft, ChevronRight, FolderCode, EllipsisVertical } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 import "@/styles/sidebar.scss"
@@ -54,6 +54,7 @@ const LeftSideBar = (props: LeftSidebarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   
+
   const handleCreateNewWorkspace = () => {
     const ids = props.workspaces.map(x => x?.id);
     const newId = Math.max(...ids) + 1;
@@ -80,23 +81,31 @@ const LeftSideBar = (props: LeftSidebarProps) => {
   const [isNewCollectionModalOpen, setIsNewCollectionModalOpen] = useState(false)
 
   return (
-    <div style={{ height: '92vh' }} className="bg-gray-800 border-r-2 border-red-400 p-4 shadow-md transition-all duration-300 ease-in-out">
-      {isLeftSidebarCollapsed ? <ChevronRight className="text-gray-500 hover:text-gray-300" style={{ position: 'absolute', bottom: '1rem', left: '1rem' }} size={32} onClick={() => setIsLeftSidebarCollapsed(false)} />
+    <div className={"sidebar-wrapper bg-gray-800 border-r-2 border-red-400 p-4 shadow-md transition-all duration-300 ease-in-out " 
+    + (isLeftSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded')}>  
+
+      {isLeftSidebarCollapsed ? 
+        <ChevronRight className="text-red-500 hover:text-red-300 rounded-full " 
+        style={{ position: 'absolute', bottom: '0.5rem', left: '0.5rem' }} 
+        size={20} 
+        onMouseDown={() => {
+          localStorage.setItem('sidebarCollapsed', 'false');
+          setIsLeftSidebarCollapsed(false)}} /> 
         :
         <div
-          className="flex flex-row gap-2 text-gray-500 hover:text-gray-300"
+          className="flex flex-row gap-2 text-red-500 hover:text-gray-300"
           style={{ position: 'absolute', bottom: '1rem', left: '1rem' }}
-          onClick={() => setIsLeftSidebarCollapsed(true)}
+          onMouseDown={() => {
+            localStorage.setItem('sidebarCollapsed', 'true');
+            setIsLeftSidebarCollapsed(true)
+          }}
         >
           <ChevronLeft size={32} />
           <span className="mt-1 hover:cursor-default">Collapse</span>
         </div>
       }
-      <div className={`${isLeftSidebarCollapsed ? 'w-2' : 'w-72'}`}>
-        {isLeftSidebarCollapsed
-          ? <>
-          </>
-          : <>
+      <div className={isLeftSidebarCollapsed ? 'w-0 hidden' : 'w-full'}> 
+        <div className="flex justify-center items-center mb-2 mt-2">
             <div className="flex justify-between items-center mb-2 mt-2">
               <h2 className="font-semibold mb-2">Collections</h2>
               <ImportDialog searchParams={searchParams} />
@@ -119,8 +128,8 @@ const LeftSideBar = (props: LeftSidebarProps) => {
                   }
                 } />
           }
-          </>
-        }
+          </div>
+        
       </div>
     </div>
   )

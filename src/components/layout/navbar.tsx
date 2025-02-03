@@ -46,7 +46,7 @@ const Navbar = (props: HeaderProps) => {
     // }, [session])
    
     return (
-        <header className="bg-gray-800 py-0 sticky w-full border-b-2 border-red-400 shadow-lg">
+        <div className="bg-gray-800 py-0 w-full border-b-2 border-red-400 shadow-lg">
             <div className="w-full px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                 <div className="w-12 flex items-center">
                     <Image src="https://utfs.io/f/5VzIfIO6yTtGnHrN3BtGQJcDXfzP96NBie4G3S2vqupKLw58" alt="HttPete Logo" width={40} height={40} className="mr-4" />
@@ -116,7 +116,7 @@ const Navbar = (props: HeaderProps) => {
 
                 </div>
             </div>
-        </header>
+        </div>
     )
 }
 

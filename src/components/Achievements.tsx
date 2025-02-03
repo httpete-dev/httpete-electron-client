@@ -1,7 +1,7 @@
 import { Award, ChartBarIcon, Check } from "lucide-react"
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import UserStatistics from "./UserStatistics";
+
 
 const userAchievements = [
     {

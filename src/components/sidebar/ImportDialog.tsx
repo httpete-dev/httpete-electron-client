@@ -1,63 +1,11 @@
 import axios from "axios";
 import { Import, X } from "lucide-react";
 import { useState } from "react";
-import { baseUrl, Collection, Endpoint, Workspace } from "@/model";
-import Loading from "./Loading";
-import { ReadonlyURLSearchParams } from "next/navigation";
+import { baseUrl } from "@/model";
+import { ImportDialogProps, PostmanCollection } from "@/model/postman";
+import Loading from "../Loading";
 
-type PostmanCollection = {
-  info: {
-    name: string;
-    description: string;
-    schema: string;
-  };
-  item: PostmanCollection | PostmanRequest | PostmanRequest[] | PostmanCollection[];
-};
 
-type PostmanRequest = {
-  name: string;
-  request: {
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
-    header: PostmanHeader[];
-    body?: PostmanBody;
-    url: PostmanUrl;
-  };
-  response: PostmanResponse[];
-  item: PostmanRequest | PostmanRequest[];
-};
-
-type PostmanHeader = {
-  key: string;
-  value: string;
-  type?: string;
-};
-
-type PostmanBody = {
-  mode: "raw" | "formdata" | "urlencoded" | "file" | "graphql";
-  raw?: string; // For raw JSON or text body
-  formdata?: { key: string; value: string; type: string }[]; // For form-data
-  urlencoded?: { key: string; value: string; type: string }[]; // For URL-encoded form data
-};
-
-type PostmanUrl = {
-  raw: string;
-  protocol: string;
-  host: string[];
-  path: string[];
-  query?: { key: string; value: string }[]; // For query parameters
-};
-
-type PostmanResponse = {
-  name?: string;
-  status?: string;
-  code?: number;
-  body?: string;
-  header?: PostmanHeader[];
-};
-
-type ImportDialogProps = {
-  searchParams: ReadonlyURLSearchParams;
-}
 
 export default function ImportDialog(props: ImportDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -88,7 +36,7 @@ export default function ImportDialog(props: ImportDialogProps) {
   const importData = async (workspaceId: number) => {
     const payload = {
       userId: 1, //TODO: Fix 
-      userName: "Placeholder Nme", //TODO: Fix
+      userName: "Placeholder Name", //TODO: Fix
       workspaceId: workspaceId,
       data: importedData
     }

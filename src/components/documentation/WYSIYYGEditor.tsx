@@ -43,6 +43,7 @@ export default function WysiwygEditor({ endpoint }: WysiwygEditorProps) {
   }, [endpoint?.documentation?.title])
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         codeBlock: false,

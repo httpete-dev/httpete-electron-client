@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev --turbopack\" \"electron ./main/main.js\"",
+    "dev": "next dev --turbopack",
+    "electron": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev --turbopack\" \"electron ./main/main.js\"",
     "build": "next build && electron-builder",
     "start": "next start",
     "lint": "next lint"

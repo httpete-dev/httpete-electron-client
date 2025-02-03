@@ -1,7 +1,7 @@
 import { withEllipses } from "@/lib/utils";
-import { EndpointDropdown } from "../icons/IconDropdown";
 import { Endpoint } from "@/model";
 import { useSearchParams } from "next/navigation";
+import { EndpointDropdown } from "./icons/IconDropdown";
 
 type EndpointEntryProps = {
     endpoint: Endpoint,

@@ -2,10 +2,10 @@ type EnvironmentVariablesProps = {
     workspaceId: number
 }
 
-const EnvironmentVariables = (w.workspaceId: number) => {
+const EnvironmentVariables = (props: EnvironmentVariablesProps) => {
     return (
         <div>
-            Environment Variables
+            Environment Variables for workspace: {props.workspaceId}
         </div>
     )
 }

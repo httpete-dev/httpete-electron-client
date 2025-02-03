@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import { addBaseUrl } from "@/server/baseUrls";
 import { useState } from "react";
 import { randomInt } from "crypto";
+import { fallbackBaseUrl } from "@/layouts/DashboardLayout";
 
 type ManageBaseUrlsDialogProps = {
     setIsDialogOpen: (open: boolean) => void;
@@ -28,7 +29,7 @@ const ManageBaseUrlsDialog = (props: ManageBaseUrlsDialogProps) => {
           }).then(res => {
             console.log('base url added', res);
             props.activeEndpoint.baseUrlId = res?.id ?? props.activeEndpoint.baseUrlId;
-            props.activeEndpoint.baseUrl = res ?? props.activeEndpoint.baseUrl;
+            props.activeEndpoint.baseUrl = res ?? props.activeEndpoint?.baseUrl ?? fallbackBaseUrl;
           }).catch(err => {
             console.log('error adding base url', err);
           }).finally(() => {
@@ -78,7 +79,7 @@ const ManageBaseUrlsDialog = (props: ManageBaseUrlsDialogProps) => {
     <div className="p-2 border-gray-900 border-2 rounded-lg">
         <p className="text-lg text-gray-400">Add new</p>
         <div className="flex flex-row ">
-            <select value={props.activeEndpoint.baseUrl?.protocol}
+            <select value={props.activeEndpoint?.baseUrl?.protocol ?? fallbackBaseUrl.protocol}
             onChange={(e) => {
                 setNewProtocol(e.target.value)
             } }

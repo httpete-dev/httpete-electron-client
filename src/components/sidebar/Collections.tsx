@@ -5,7 +5,6 @@ import { Collection, BaseUrl, Endpoint } from "@/model";
 import CollectionDropdown, { EndpointDropdown } from "../icons/IconDropdown";
 import { UrlParams } from "./left-sidebar";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
-import EndpointEntry from "./Endpoint";
 import { deleteCollection } from "@/server/collections";
 import { addEndpoint } from "@/server/endpoints";
 

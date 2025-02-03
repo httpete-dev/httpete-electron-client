@@ -118,7 +118,7 @@ body {
 }
 
 .TabsContent {
-	
+	border: 2px solid #e14949;
 }
 .TabsRoot {
 	display: flex;
@@ -159,7 +159,7 @@ body {
 	color: #dbaeae;
 }
 .TabsTrigger[data-state="active"] {
-	color: white;
+	color: red;
     // width: 120px !important;
     // margin-left: -0.5rem;
     background-color: rgb(225, 73, 73);
