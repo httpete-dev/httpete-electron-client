@@ -370,7 +370,6 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                     </div>
                                 </div>
                                 {showDocs &&
-                                    // <MilkdownEditor defaultValue={props.activeEndpoint.documentation?.text ?? ""}/>
                                     <WysiwygEditor 
                                         endpoint={props.activeEndpoint ?? fallbackEndpoint} />
                                 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Import, X } from "lucide-react";
 import { useState } from "react";
-import { baseUrl } from "@/model";
+import { BaseUrl } from "@/model";
 import { ImportDialogProps, PostmanCollection } from "@/model/postman";
 import Loading from "../Loading";
 

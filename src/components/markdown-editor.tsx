@@ -25,28 +25,46 @@ type MarkdownEditorProps = {
 }
 
 const MarkdownEditor = (props: MarkdownEditorProps) => {
-  const [viewMode, setViewMode] = useState<ViewMode>( props.isMobile ? 'edit' : 'both')
+  const [viewMode, setViewMode] = useState<ViewMode>(props.isMobile ? 'edit' : 'both')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const [editingTitle, setEditingTitle] = useState(false);
-  const docTitleRef = useRef(null);
+  const docTitleRef = useRef<HTMLInputElement>(null)
+  const [editingTitle, setEditingTitle] = useState(false)
 
-  const [title, setTitle] = useState(props.activeDocument.title)
-  const [text, setText] = useState(props.activeDocument.text)
-  const url = props.activeEndpoint?.url?.replace("https://", "")
-                .replace("http://", "")
-                .split('/')
-                .slice(1).join('/');
+  // Initialize state with prop values or fallbacks
+  const [title, setTitle] = useState(props.activeDocument?.title || 'Untitled Document')
+  const [text, setText] = useState(props.markdown || '')
+
+  // Safely access URL with fallbacks
+  const url = props.activeEndpoint?.url
+    ? props.activeEndpoint.url
+        .replace(/^https?:\/\//, '')
+        .split('/')
+        .slice(1)
+        .join('/')
+    : ''
+
+  // Update local state when props change
+  useEffect(() => {
+    setTitle(props.activeDocument?.title || 'Untitled Document')
+  }, [props.activeDocument?.title])
+
+  useEffect(() => {
+    setText(props.markdown || '')
+  }, [props.markdown])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value)
-    props.setDocumentChanged(true);
-    // props.setMarkdown(e.target.value)
-    // props.setDocumentChanged(true);
+    const newText = e.target.value
+    setText(newText)
+    props.setMarkdown(newText)
+    props.setDocumentChanged(true)
   }
 
   const handleDocTitleChange = async (newTitle: string) => {
-    props.activeDocument.title = newTitle;
-    setEditingTitle(false);
+    if (props.activeDocument) {
+      props.activeDocument.title = newTitle
+      setTitle(newTitle)
+    }
+    setEditingTitle(false)
   }
 
   useEffect(() => {
@@ -121,13 +139,27 @@ const MarkdownEditor = (props: MarkdownEditorProps) => {
   return (
     <div className="flex flex-col bg-gray-900 text-white" style={{maxHeight:'50vh'}}>
       <div className="flex justify-between items-center p-4 bg-gray-800">
-        {editingTitle ?
-          <Input ref={docTitleRef} id="title-focus" style={{ padding: '90px !important', color: 'black', fontSize: '28pt' }} contentEditable={true} defaultValue={props.activeDocument?.title} onChange={(e) => { props.activeEndpoint.docTitle = e.target.value }} />
-          : <h1 onClick={() => { setEditingTitle(true); }} className="document-title" s
-            tyle={{ color: 'white' }}>
+        {editingTitle ? (
+          <Input 
+            ref={docTitleRef}
+            id="title-focus"
+            style={{ padding: '90px !important', color: 'black', fontSize: '28pt' }}
+            defaultValue={title}
+            onChange={(e) => {
+              if (props.activeEndpoint?.documentation) {
+                props.activeEndpoint.documentation.title = e.target.value;
+              }
+            }}
+          />
+        ) : (
+          <h1 
+            onClick={() => setEditingTitle(true)}
+            className="document-title"
+            style={{ color: 'white' }}
+          >
             {title}
           </h1>
-        }
+        )}
             <div className="flex gap-2 p-4 bg-gray-800">
         <Button variant="outline" size="icon" onClick={toggleViewMode}>
           {viewMode === 'edit' && <Edit color='black' className="h-4 w-4" />}

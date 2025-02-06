@@ -28,9 +28,8 @@ import {
 import { Button } from "@/components/ui/button"
 import "@/styles/documentation.scss"
 import { formatMarkdown } from "@/lib/markdown"
-import { uploadMedia } from "@/server/mediaUpload"
 import { WysiwygEditorProps, ToolbarButtonProps } from "@/types/markdown"
-
+import { uploadFile } from "@/server/mediaUpload"
 export default function WysiwygEditor({ endpoint }: WysiwygEditorProps) {
   const [title, setTitle] = useState("Untitled Document")
   const [isEditingTitle, setIsEditingTitle] = useState(false)
@@ -80,7 +79,7 @@ export default function WysiwygEditor({ endpoint }: WysiwygEditorProps) {
               view.dispatch(transaction)
 
               try {
-                const url = await uploadMedia(file)
+                const url = await uploadFile(file)
                 editor?.chain().focus().setImage({ src: url }).run()
               } catch (error) {
                 console.error("Failed to upload image:", error)

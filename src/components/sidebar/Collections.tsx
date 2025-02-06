@@ -7,6 +7,7 @@ import { UrlParams } from "./left-sidebar";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { deleteCollection } from "@/server/collections";
 import { addEndpoint } from "@/server/endpoints";
+import EndpointEntry from "../Endpoint";
 
 
 
