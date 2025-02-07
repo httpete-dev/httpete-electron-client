@@ -1,10 +1,11 @@
 'use client'
-import { ChevronLeft, ChevronRight, User, CreditCard, Settings2, Share2, GitMerge, Link, ArrowRightLeft, Brain, BrainCircuit, BrainCog } from "lucide-react";
-import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
 
+import { ChevronLeft, ChevronRight, User, CreditCard, Settings2, Share2, GitMerge, Link, ArrowRightLeft, Brain, BrainCircuit, BrainCog } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 type SettingsSidebarProps = {
+  width: number;
   activePage: string,
   setActivePage: (page: string) => void;
 };
@@ -29,8 +30,6 @@ const options = [
 
 const SettingsSidebar = (props: SettingsSidebarProps) => {
   const checkMobile = () : boolean => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
     // Define mobile breakpoint (e.g., 768px)
     const mobileBreakpoint = 768; // Common breakpoint for mobile devices
 
@@ -38,15 +37,12 @@ const SettingsSidebar = (props: SettingsSidebarProps) => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isMobileAgent = /android|avantgo|blackberry|bada|bb10|iemobile|opera mini|opera mobi|phone|mobile|mini|wap/i.test(userAgent);
 
-    return width < mobileBreakpoint || isMobileAgent;
+    return props.width < mobileBreakpoint || isMobileAgent;
   }
-  
+    
   const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(checkMobile())
 
-  useEffect(() => {
-    setIsMobile(checkMobile());
-  }, [window.innerWidth, window.innerHeight])
   return (
     <div className="bg-gray-800 border-r-2 border-red-400 p-6 shadow-md transition-all duration-300 ease-in-out w-24 md:w-24 sm:w-24 lg:w-fit">
       {isLeftSidebarCollapsed

@@ -2,17 +2,16 @@
 import Image from "next/image"
 import { ChevronDown, Code, File, Globe, LogOut, LogOutIcon, Menu, Settings, User, Users } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { signOut, useSession } from "next-auth/react"
 import React, { useEffect, useState } from "react"
 import { Workspace } from "@/model"
 import { createNewWorkspace } from "@/server/workspaces"
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar"
 import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog"
 import { DropdownMenuItem, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from "@radix-ui/react-dropdown-menu"
-import { Input } from "postcss"
 import Loading from "../Loading"
 import { Button } from "../ui/button"
 import { DialogHeader, DialogFooter } from "../ui/dialog"
+import { Input } from "../ui/input"
 
 type HeaderProps = {
     title: string,
@@ -47,7 +46,7 @@ export const DropdownMenuEntry = (props: DropdownMenuEntryProps) => {
     return (
         <DropdownMenuItem onClick={() => {
             if (props.title === 'Sign out') {
-                signOut({ callbackUrl: '/' })
+                // signOut({ callbackUrl: '/' })
                 return;
             }
 
@@ -82,14 +81,13 @@ export const DashboardDropdownLarge = (props: DashboardDropdownLargeProps) => {
     const router = useRouter();
     const path = usePathname();
     const isActive = path === props.path;
-    const { data: session } = useSession();
     const [activeWorkspace, setActiveWorkspace] = useState({ id: 0 } as Workspace)
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [newWorkspaceName, setNewWorkspaceName] = useState('');
     const [workspaceTitle, setWorkspaceTitle] = useState(session?.user.activeWorkspace?.title ?? 'Personal Workspace');
 
     const handleDialogConfirm = () => {
-        const userId = parseInt(session?.user?.id ?? '-1');
+        const userId = -1; // FIXME: Get user id from session
         if (userId === -1) {
             return;
         }
@@ -253,15 +251,14 @@ export const DashboardBtnLarge = (props: DashboardBtnLargeProps) => {
 
 export const DashboardHeader = (props: HeaderProps) => {
     const router = useRouter()
-    const { data: session, status } = useSession();
     const [workspaces, setWorkspaces] = useState([] as Workspace[])
     const [activeWorkspace, setActiveWorkspace] = useState({} as Workspace)
     const [pageLoading, setPageLoading] = useState('');
 
-    useEffect(() => {
-        setWorkspaces(session?.user?.workspaces ?? [])
-        setActiveWorkspace(session?.user?.activeWorkspace ?? {} as Workspace)
-    }, [session])
+    // useEffect(() => {
+    //     setWorkspaces(session?.user?.workspaces ?? [])
+    //     setActiveWorkspace(session?.user?.activeWorkspace ?? {} as Workspace)
+    // }, [session])
     return (
         <header className="bg-gray-800 py-0 sticky w-full border-b-2 border-red-400 shadow-lg">
             <div className="w-full px-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -286,7 +283,7 @@ export const DashboardHeader = (props: HeaderProps) => {
                         <div className="w-full flex flex-wrap gap-0">
                             <div className="mt-0" style={{ height: '60px', padding: '5px' }}>
                                 {props.title !== 'Settings' && props.title !== 'Community' &&
-                                    <DashboardDropdownLarge title="APIs Interface" path="/dashboard" icon={<Globe className="w-6 h-6 text-white" />} />}
+                                    <DashboardDropdownLarge title="APIs Interface" path="/dashboard" icon={<Globe className="w-6 h-6 text-white" />} workspaces={[]} activeWorkspace={0} />}
                             </div>
                             <div className="absolute right-0 flex flex-row p-2">
                                 <div className="flex flex-row gap-2" style={{ height: '45px', padding: '5px' }}>

@@ -105,7 +105,7 @@ const LeftSideBar = (props: LeftSidebarProps) => {
         </div>
       }
       <div className={isLeftSidebarCollapsed ? 'w-0 hidden' : 'w-full'}> 
-        <div className="flex justify-center items-center mb-2 mt-2">
+        <div className="flex flex-col justify-center items-center mb-2 mt-2">
             <div className="flex justify-between items-center mb-2 mt-2">
               <h2 className="font-semibold mb-2">Collections</h2>
               <ImportDialog searchParams={searchParams} />
