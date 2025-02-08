@@ -283,7 +283,13 @@ export const DashboardHeader = (props: HeaderProps) => {
                         <div className="w-full flex flex-wrap gap-0">
                             <div className="mt-0" style={{ height: '60px', padding: '5px' }}>
                                 {props.title !== 'Settings' && props.title !== 'Community' &&
-                                    <DashboardDropdownLarge title="APIs Interface" path="/dashboard" icon={<Globe className="w-6 h-6 text-white" />} workspaces={[]} activeWorkspace={0} />}
+                                    <DashboardDropdownLarge 
+                                        title="API Interface" 
+                                        path="/dashboard" 
+                                        icon={<Globe className="w-6 h-6 text-white" />} 
+                                        workspaces={workspaces} 
+                                        activeWorkspace={activeWorkspace?.id ?? -1} 
+                                    />}
                             </div>
                             <div className="absolute right-0 flex flex-row p-2">
                                 <div className="flex flex-row gap-2" style={{ height: '45px', padding: '5px' }}>

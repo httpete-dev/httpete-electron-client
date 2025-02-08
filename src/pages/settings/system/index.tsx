@@ -13,6 +13,7 @@ export default function SystemSettingsPage() {
     pushNotifications: false,
     darkMode: true,
     twoFactorAuth: false,
+    streamerMode: false,
   })
 
   const [passwordFields, setPasswordFields] = useState({
@@ -133,16 +134,16 @@ export default function SystemSettingsPage() {
             <TooltipTrigger asChild>
           
           <div className="flex items-center space-x-2 w-full">
-            {settings.darkMode ? <EyeOff className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            {settings.streamerMode ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             <Label htmlFor="streamerMode">Streamer Mode</Label>
 
 
               <Switch
                 id="streamerMode"
-                checked={settings.darkMode}
+                checked={settings.streamerMode}
                 disabled={true}
-                onCheckedChange={() => handleSettingChange('darkMode')}
-                className={' ' + (settings.darkMode === false ? ' bg-slate-500' : ' bg-red-500')} 
+                onCheckedChange={() => handleSettingChange('streamerMode')}
+                className={' ' + (settings.streamerMode === false ? ' bg-slate-500' : ' bg-red-500')} 
                 />
             </div>
             </TooltipTrigger>

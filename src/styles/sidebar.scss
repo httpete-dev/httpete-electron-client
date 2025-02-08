@@ -39,12 +39,15 @@ $sidebar-background: #1F2937;
     background-color: $sidebar-background;
     color: white;
     padding: 0;
-    transition: width 0.2s ease-in-out;
+    transition: width 0.25s ease-in-out;
+    max-width: 400px;
 }
 
 .sidebar-collapsed {
-    width: 0px;
-    transition: width 0.2s ease-in-out;
+    width: 24px;
+    max-width: 400px;
+    transition: width 0.25s ease-in-out;
+    border:0;
 }
 
 .sidebar-expanded {

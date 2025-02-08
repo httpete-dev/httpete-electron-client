@@ -33,7 +33,7 @@ const TestsForEndpoint = (props: TestsForEndpointProps) => {
                 Hello
             </h1>
             <div>
-                <EndpointTestComponent tests={props.endpoint.tests ?? tests} />
+                <EndpointTestComponent tests={props.endpoint?.tests ?? tests} />
             </div>
         </div>
     )

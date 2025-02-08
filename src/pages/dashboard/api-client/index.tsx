@@ -23,35 +23,13 @@ import toastr from "toastr"
 import EnvironmentVariables from "@/components/api-client/EnvironmentVariables"
 import WysiwygEditor from "@/components/documentation/WYSIYYGEditor"
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: true });
-import DashboardLayout, { fallbackBaseUrl, fallbackEndpoint } from "@/layouts/DashboardLayout";
 import LoadingSpinner from "@/components/LoadingSpinner"
 import TestsForEndpoint from "@/components/TestsForEndpoint"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useDashboard } from "@/contexts/DashboardContext"
+import DashboardLayout from "@/layouts/DashboardLayout"
+import { fallbackBaseUrl, fallbackEndpoint } from "@/types"
 import "@/styles/documentation.scss"
-
-export type DashboardPageProps = {
-    workspaces: Workspace[];
-    baseUrls: BaseUrl[],
-    collections: Collection[],
-    endpoints: Endpoint[],
-    isDocumentationChanged: boolean,
-    buildUrlParams: (search: string, params: UrlParams) => string;
-    activeCollection: Collection,
-    activeWorkspace: Workspace,
-    setActiveCollection: (cId: number) => void,
-    setActiveDocumentation: (doc: Doc) => void
-    setIsDocumentationChanged: (changed: boolean) => void,
-    setEditingTitle: (editing: boolean) => void
-    getCollection: (cId: number) => Collection | undefined,
-    getEndpoint: (c: Collection, eId: number) => Endpoint | undefined,
-    activeEndpoint: Endpoint,
-    setActiveEndpoint: (endpoint: Endpoint) => void
-    updateActiveEndpoint: (eId: number) => void
-    updateParams: (params: UrlParams) => void
-    updateCollections: () => void
-    setCollectionsLoading: (loading: boolean) => void
-    collectionsLoading: boolean
-}
 
 const styles = {
     loadingAnimation: {
@@ -59,26 +37,34 @@ const styles = {
     },
 }
 
-const ApiClientPage = (props: DashboardPageProps) => {
+const ApiClientPage = () => {
+    const { 
+        activeWorkspace,
+        activeEndpoint,
+        setActiveEndpoint,
+        baseUrls,
+        isLoading,
+        setIsLoading 
+    } = useDashboard();
+
     const [responseData, setResponseData] = useState("")
     const [isRightSidebarCollapsed, setIsRightSidebarCollapsed] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
     const [isUnsavedChangesDialogOpen, setIsUnsavedChangesDialogOpen] = useState(false)
     const workspaceNameInputRef = useRef(null)
     const [isNewWorkspaceModalOpen, setIsNewWorkspaceModalOpen] = useState(false)
     const [editingDoc, setEditingDoc] = useState(false);
     const docContentRef = useRef(null);
-    const [activeTab, setActiveTab] = useState("request");
-    const [doc, setDoc] = useState('');// TODO:
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState("request")
+    const [doc, setDoc] = useState('')
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [showDocs, setShowDocs] = useState(true)
 
     const searchParams = useSearchParams();
-    const [showDocs, setShowDocs] = useState(true);
     const [pageLoading, setPageLoading] = useState(false)
 
     const handleTabClick = (value: string) => {
-        setActiveTab(value); // Update the active tab state
-    };
+        setActiveTab(value)
+    }
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -96,48 +82,8 @@ const ApiClientPage = (props: DashboardPageProps) => {
         }
     }, [])
 
-
-    // useEffect(() => {
-    //     const collectionId = parseInt(searchParams.get('collectionId') ?? '-1');
-    //     const endpointId = parseInt(searchParams.get('endpointId') ?? '-1');
-    //     const collection = props.collections?.find(x => x.id === collectionId)
-    //     const endpoint = props.activeEndpoint ?? fallbackEndpoint;
-
-    //     if (collection && collectionId.toString() !== searchParams.get('collectionId')) {
-    //         props.activeEndpoint.method = endpoint?.method ?? props.activeEndpoint?.method;
-    //         props.activeEndpoint.baseUrlId = endpoint?.baseUrl?.id ?? props.activeEndpoint?.baseUrlId;
-    //         props.activeEndpoint.baseUrl = endpoint?.baseUrl ?? props.activeEndpoint?.baseUrl;
-    //     } else {
-    //         props.activeEndpoint.method = endpoint?.method ?? props.activeEndpoint?.method;
-    //         props.activeEndpoint.baseUrlId = endpoint?.baseUrl?.id ?? props.activeEndpoint?.baseUrlId;
-    //         props.activeEndpoint.baseUrl = endpoint?.baseUrl ?? props.activeEndpoint?.baseUrl;
-    //     }
-
-    //     if (!props.endpoints || collectionId !== props.endpoints[0]?.collectionId) {
-    //         const collection = props.getCollection(collectionId);
-
-    //         if (collection) {
-    //             props.setActiveCollection(collectionId);
-    //             props.updateActiveEndpoint((props.endpoints?.find(x => x.id === endpointId) ?? { id: -1 } as Endpoint).id);
-    //         }
-    //     }
-
-    //     if (props.activeEndpoint.baseUrl === null) {
-    //         props.activeEndpoint.baseUrl = props.baseUrls.find(x => x.id === props.activeEndpoint?.baseUrlId)
-    //             ?? props.baseUrls[0]
-    //             ?? props.activeEndpoint?.baseUrl
-    //             ?? fallbackBaseUrl;
-    //     }
-    // }, [searchParams])
-
-    // useEffect(() => {
-    //     setPageLoading(false);
-    // }, [props.getEndpoint(props.getCollection(parseInt(searchParams?.get('collectionId') ?? '-1')) ?? {} as Collection, parseInt(searchParams?.get('endpointId') ?? '-1'))])
-
-
     function getResponse() {
-        if (!responseData)
-            return
+        if (!responseData) return
         
         var obj = JSON.parse(responseData ?? '{}')
         if (obj.data?.headers) {
@@ -148,8 +94,12 @@ const ApiClientPage = (props: DashboardPageProps) => {
             obj.data.body = JSON.parse((obj.data.body + ""))
         }
 
-        if (obj.data?.config?.data) {
-            obj.data.config.data = 5;
+        if (obj.data?.config?.data && typeof obj.data.config.data === 'string') {
+            try {
+                obj.data.config.data = JSON.parse(obj.data.config.data)
+            } catch (e) {
+                console.log('Failed to parse config data:', e)
+            }
         }
         return JSON.stringify(obj, null, 2)
     }
@@ -165,24 +115,24 @@ const ApiClientPage = (props: DashboardPageProps) => {
 
                     <Tabs defaultValue="request" className="w-full h-full">
                         <div className="flex justify-between items-center mb-4">
-                            <TabsList className="flex flex-row gap-0" >
+                                            <TabsList className="bg-gray-700">
                                 <TabsTrigger
                                     value="request"
-                                    className="TabsTrigger "
+     className="data-[state=active]:bg-red-500 data-[state=active]:text-white hover:bg-red-800 hover:text-white"
                                     onClick={() => handleTabClick("request")} // Handle tab click
                                 >
                                     Request
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="docs"
-                                    className="TabsTrigger"
+                                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white hover:bg-red-800 hover:text-white"
                                     onClick={() => handleTabClick("docs")} // Handle tab click
                                 >
                                     Documentation
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="environment"
-                                    className="TabsTrigger"
+                                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white hover:bg-red-800 hover:text-white"
                                     onClick={() => handleTabClick("environment")} // Handle tab click
                                 >
                                     Environment
@@ -190,7 +140,7 @@ const ApiClientPage = (props: DashboardPageProps) => {
 
                                 <TabsTrigger
                                     value="tests"
-                                    className="TabsTrigger"
+                                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white hover:bg-red-800 hover:text-white"
                                     onClick={() => handleTabClick("tests")} // Handle tab click
                                 >
                                     Tests
@@ -200,7 +150,7 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => { }} // TODO:
-                                disabled={!props?.isDocumentationChanged}
+                                disabled={!isUnsavedChangesDialogOpen}
                             >
                                 <Save className="h-4 w-4" />
                             </Button>
@@ -210,10 +160,10 @@ const ApiClientPage = (props: DashboardPageProps) => {
                             <div className="flex space-x-2">
                                 <select
                                     className="bg-gray-700 border border-gray-600 rounded px-2 py-1"
-                                    value={props.activeEndpoint?.method}
+                                    value={activeEndpoint?.method}
                                     onChange={(e) => {
                                         if (e.target.value === 'GET' || e.target.value === 'POST' || e.target.value === 'PUT' || e.target.value === 'PATCH' || e.target.value === 'DELETE') {
-                                            props.activeEndpoint.method = e.target.value;
+                                            setActiveEndpoint({...activeEndpoint, method: e.target.value as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'})
                                         } else {
                                             toastr.error('Invalid method');
                                         }
@@ -227,14 +177,26 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                 </select>
                                 <select
                                     className="bg-gray-700 border border-gray-600 rounded px-2 py-1"
-                                    value={props.activeEndpoint?.baseUrl?.protocol}
+                                    value={activeEndpoint?.baseUrl?.protocol}
                                     onChange={(e) => {
-                                        if (!props.activeEndpoint?.baseUrl) {
-                                            props.activeEndpoint.baseUrl = props.baseUrls[0] ?? fallbackBaseUrl;
+                                        if (!activeEndpoint?.baseUrl) {
+                                            setActiveEndpoint({
+                                                ...activeEndpoint,
+                                                baseUrl: {
+                                                    ...activeEndpoint.baseUrl,
+                                                    protocol: e.target.value
+                                                }
+                                            })
                                         }
 
-                                        props.activeEndpoint.baseUrl.protocol = e.target.value;
-                                        console.log('protocol', props.activeEndpoint?.baseUrl?.protocol)
+                                        setActiveEndpoint({
+                                            ...activeEndpoint,
+                                            baseUrl: {
+                                                ...activeEndpoint.baseUrl,
+                                                protocol: e.target.value
+                                            }
+                                        })
+                                        console.log('protocol', activeEndpoint?.baseUrl?.protocol)
                                     }}
                                 >
                                     <option>HTTP</option>
@@ -243,19 +205,21 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                 </select>
                                 <select
                                     className="bg-gray-700 border border-gray-600 rounded px-2 py-1"
-                                    value={props.activeEndpoint?.baseUrl?.value}
+                                    value={activeEndpoint?.baseUrl?.value}
                                     onChange={(e) => {
                                         if (e.target.value === 'Manage...') {
                                             setIsDialogOpen(true);
                                             return;
                                         }
-                                        props.activeEndpoint.baseUrl = props.baseUrls.find(x => x.value === e.target.value)
-                                            ?? props.activeEndpoint?.baseUrl ?? fallbackBaseUrl;
-                                        props.activeEndpoint.baseUrlId = props.activeEndpoint?.baseUrl?.id ?? props.activeEndpoint?.baseUrlId;
-                                        
+                                        setActiveEndpoint({
+                                            ...activeEndpoint,
+                                            baseUrl: baseUrls.find(x => x.value === e.target.value)
+                                                ?? activeEndpoint?.baseUrl ?? fallbackBaseUrl,
+                                            baseUrlId: baseUrls.find(x => x.value === e.target.value)?.id ?? activeEndpoint?.baseUrlId
+                                        })
                                     }}
                                 >
-                                    {props.baseUrls?.map((x, index) => (
+                                    {baseUrls?.map((x, index) => (
                                         <option key={index} value={x.value}>
                                             {x.value}
                                         </option>
@@ -264,17 +228,17 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                 </select>
 
                                 <ManageBaseUrlsDialog
-                                    baseUrls={props.baseUrls}
+                                    baseUrls={baseUrls}
                                     setIsDialogOpen={setIsDialogOpen}
                                     isDialogOpen={isDialogOpen}
-                                    activeEndpoint={props.activeEndpoint}
+                                    activeEndpoint={activeEndpoint}
                                     addBaseUrl={addBaseUrl} />
                                 <Input
                                     type="text"
                                     placeholder="Enter request URL"
-                                    value={(props.activeEndpoint?.url ?? '')}
+                                    value={(activeEndpoint?.url ?? '')}
                                     onChange={(e) => {
-                                        props.activeEndpoint.url = e.target.value;
+                                        setActiveEndpoint({...activeEndpoint, url: e.target.value})
                                     }}
                                     className="flex-1 bg-gray-700 border-gray-600 text-gray-100"
                                 />
@@ -282,8 +246,8 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                 {/* Send Request */}
                                 <Button
                                     onClick={() => {
-                                        const endpoint = props.activeEndpoint ?? fallbackEndpoint;
-                                        const url = props.activeEndpoint?.baseUrl?.protocol.toLowerCase() + '://' + props.activeEndpoint?.baseUrl?.value + endpoint.url;
+                                        const endpoint = activeEndpoint ?? fallbackEndpoint;
+                                        const url = endpoint.baseUrl?.protocol.toLowerCase() + '://' + endpoint.baseUrl?.value + endpoint.url;
 
                                         const request = {
                                             baseURL: url,
@@ -294,13 +258,17 @@ const ApiClientPage = (props: DashboardPageProps) => {
 
                                         console.log('sending request...', request)
 
-                                        axios(url, request).then(res => {
-                                            toastr.info(`[${res.status}: ${res.statusText}]`, 'Request successful: ')
-                                            setResponseData(JSON.stringify(res));
-                                        })
+                                        setIsLoading(true)
+                                        axios(url, request)
+                                            .then(res => {
+                                                toastr.info(`[${res.status}: ${res.statusText}]`, 'Request successful: ')
+                                                setResponseData(prettifyJson(JSON.stringify(res)) ?? '{}')
+                                            })
                                             .catch(err => {
                                                 toastr.error(err.message, 'Unexpected error occurred:')
+                                                setResponseData(prettifyJson(JSON.stringify(err)) ?? '{}')
                                             })
+                                            .finally(() => setIsLoading(false))
                                     }} // TODO:
                                     className={`bg-red-500 hover:bg-cyan-600 text-white ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     disabled={isLoading}
@@ -316,8 +284,8 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                         {/* <CustomGPTAgent className={""} /> */}
                                         <Tabs defaultValue="headers" className="w-full">
                                             <TabsList className="bg-gray-700">
-                                                <TabsTrigger value="headers" className="data-[state=active]:bg-red-500 data-[state=active]:text-white">Headers</TabsTrigger>
-                                                <TabsTrigger value="body" className="data-[state=active]:bg-red-500 data-[state=active]:text-white">Body</TabsTrigger>
+                                                <TabsTrigger value="headers" className="data-[state=active]:bg-red-500 data-[state=active]:text-white hover:bg-red-800 hover:text-white">Headers</TabsTrigger>
+                                                <TabsTrigger value="body" className="data-[state=active]:bg-red-500 data-[state=active]:text-white hover:bg-red-800 hover:text-white">Body</TabsTrigger>
                                             </TabsList>
                                             <Button
                                                 variant="outline"
@@ -333,9 +301,9 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                                         defaultLanguage="json"
                                                         defaultValue="{}"
                                                         theme="vs-dark"
-                                                        value={prettifyJson(props.activeEndpoint?.headers ?? '{}')!}
+                                                        value={prettifyJson(activeEndpoint?.headers ?? '{}')!}
                                                         onChange={(value) => {
-                                                            // TODO: update endpoint
+                                                            setActiveEndpoint({...activeEndpoint, headers: value ?? '{}'})
                                                         }}
                                                     />
                                                 </div>
@@ -347,9 +315,9 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                                         defaultLanguage="json"
                                                         defaultValue="{}"
                                                         theme="vs-dark"
-                                                        value={prettifyJson(props.activeEndpoint?.body ?? '{}')!}
+                                                        value={prettifyJson(activeEndpoint?.body ?? '{}')!}
                                                         onChange={(value) => {
-                                                            // TODO: update endpoint
+                                                            setActiveEndpoint({...activeEndpoint, body: value ?? '{}'})
                                                         }}
                                                     />
                                                 </div>
@@ -363,15 +331,15 @@ const ApiClientPage = (props: DashboardPageProps) => {
                                         </div>
                                         <div className="border rounded shadow-md">
                                             <SyntaxHighlighter language="json" style={dracula}>
-                                                {/* {responseData} */}
-                                                {getResponse()}
+                                                {responseData}
+                                                {/* {getResponse()} */}
                                             </SyntaxHighlighter>
                                         </div>
                                     </div>
                                 </div>
                                 {showDocs &&
                                     <WysiwygEditor 
-                                        endpoint={props.activeEndpoint ?? fallbackEndpoint} />
+                                        endpoint={activeEndpoint ?? fallbackEndpoint} />
                                 }
 
                             </div>
@@ -381,17 +349,13 @@ const ApiClientPage = (props: DashboardPageProps) => {
                         <TabsContent value="docs">
                             <div className="space-y-4">
                                 <MarkdownEditor
-                                    activeDocument={props.activeEndpoint?.documentation ?? fallbackEndpoint.documentation}
-                                    activeEndpoint={props.activeEndpoint ?? fallbackEndpoint}
+                                    activeDocument={activeEndpoint?.documentation ?? fallbackEndpoint.documentation}
+                                    activeEndpoint={activeEndpoint ?? fallbackEndpoint}
                                     // docTitle={endpoints?.find(x => x.id === parseInt(searchParams?.get('endpointId') ?? '-1'))?.documentation?.title ?? 'Untitled'}
                                     setDocumentChanged={(changed: boolean) => {
-                                        // Handle document changed state
+                                        setIsUnsavedChangesDialogOpen(changed)
                                     }}
-                                    setActiveEndpoint={(endpoint) => {
-                                        if (typeof endpoint === 'number') {
-                                            props.updateActiveEndpoint(endpoint);
-                                        }
-                                    }}
+                                    setActiveEndpoint={setActiveEndpoint}
                                     setEditingTitle={() => { }} // TODO:
                                     markdown={doc}
                                     setMarkdown={setDoc}
@@ -401,11 +365,11 @@ const ApiClientPage = (props: DashboardPageProps) => {
                         </TabsContent>
 
                         <TabsContent value="tests">
-                            <TestsForEndpoint endpoint={props.activeEndpoint} />
+                            <TestsForEndpoint endpoint={activeEndpoint ?? fallbackEndpoint} />
                         </TabsContent>
 
                         <TabsContent value="environment">
-                            <EnvironmentVariables workspaceId={props.activeWorkspace?.id ?? -1} />
+                            <EnvironmentVariables workspaceId={activeWorkspace?.id ?? -1} />
                         </TabsContent>
                     </Tabs>
                 </main>

@@ -56,14 +56,16 @@ const LeftSideBar = (props: LeftSidebarProps) => {
   
 
   const handleCreateNewWorkspace = () => {
-    const ids = props.workspaces.map(x => x?.id);
+    const ids = props.workspaces.map(x => x?.id ?? 0);
     const newId = Math.max(...ids) + 1;
     const newWorkspace = {
       id: newId,
       title: newWorkspaceName,
       description: newWorkspaceDescription,
       icon: newWorkspaceIcon,
-    } as Workspace;
+      organizationId: props.activeWorkspace.organizationId,
+      collections: [],
+    } as unknown as Workspace;
     props.addWorkspace(newWorkspace)
     props.setActiveWorkspace(newWorkspace)
     setIsNewWorkspaceModalOpen(false)
@@ -85,12 +87,15 @@ const LeftSideBar = (props: LeftSidebarProps) => {
     + (isLeftSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded')}>  
 
       {isLeftSidebarCollapsed ? 
+      <div className="flex justify-center items-center bg-gray-800 hover:bg-gray-700 border-0 h-screen w-full"
+      
+      onMouseDown={() => {
+        localStorage.setItem('sidebarCollapsed', 'false');
+        setIsLeftSidebarCollapsed(false)}} 
+        >
         <ChevronRight className="text-red-500 hover:text-red-300 rounded-full " 
-        style={{ position: 'absolute', bottom: '0.5rem', left: '0.5rem' }} 
-        size={20} 
-        onMouseDown={() => {
-          localStorage.setItem('sidebarCollapsed', 'false');
-          setIsLeftSidebarCollapsed(false)}} /> 
+        size={20} /> 
+          </div>
         :
         <div
           className="flex flex-row gap-2 text-red-500 hover:text-gray-300"

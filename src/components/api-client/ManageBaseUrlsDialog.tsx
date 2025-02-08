@@ -1,12 +1,11 @@
 'use client'
-import { BaseUrl, Endpoint, Workspace } from "@/model";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { addBaseUrl } from "@/server/baseUrls";
 import { useState } from "react";
 import { randomInt } from "crypto";
-import { fallbackBaseUrl } from "@/layouts/DashboardLayout";
+import { Endpoint, BaseUrl, fallbackBaseUrl } from "@/types";
 
 type ManageBaseUrlsDialogProps = {
     setIsDialogOpen: (open: boolean) => void;
