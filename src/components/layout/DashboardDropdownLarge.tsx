@@ -1,4 +1,4 @@
-import { Workspace } from "@/model";
+import { Workspace } from "@/types/workspace";
 import { createNewWorkspace } from "@/server/workspaces";
 import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { DialogHeader, DialogFooter } from "../ui/dialog";
 import { Input } from "../ui/input";
-import "@/styles/globals.css"
+import "@/styles/globals.scss"
 type DashboardDropdownLargeProps = {
     title: string,
     icon: React.ReactNode,

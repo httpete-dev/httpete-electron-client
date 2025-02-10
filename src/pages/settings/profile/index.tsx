@@ -1,10 +1,13 @@
 import Achievements from "@/components/Achievements";
 import EditProfile from "@/components/EditProfile";
 import ProfileSection from "@/components/ProfileSection";
+import SettingsLayout from "@/layouts/SettingsLayout";
 
 
 export default function ProfilePage() {
   return (
+    <SettingsLayout>
+
     <div className='grid grid-cols-5 w-fit m-8'>
 
       <div className='col-span-2'>
@@ -17,6 +20,7 @@ export default function ProfilePage() {
         <Achievements expanded={true} />
       </div>
     </div>
+    </SettingsLayout>
   )
 }
 

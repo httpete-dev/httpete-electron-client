@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Check, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-
+import SettingsLayout from '@/layouts/SettingsLayout'
 const plans = [
   {
     name: 'Free',
@@ -60,6 +60,7 @@ export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState('Free')
 
   return (
+    <SettingsLayout>
     <div className="space-y-8 w-full p-8">
       <div className="bg-gray-800 p-6 rounded-lg">
         <h2 className="text-2xl font-semibold mb-4">Current Plan</h2>
@@ -105,6 +106,7 @@ export default function BillingPage() {
         ))}
       </div>
     </div>
+    </SettingsLayout>
   )
 }
 

@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+---
+- Alway move types to files inside the `types` directory; these should be organized by domain
+- Ensure guard clauses are present when it makes sense
+- Ensure there are tests for creating the expected types

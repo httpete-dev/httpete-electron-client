@@ -1,101 +1,107 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, User, CreditCard, Settings2, Share2, GitMerge, Link, ArrowRightLeft, Brain, BrainCircuit, BrainCog } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, CreditCard, Settings2, BrainCog } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import "@/styles/settings-sidebar.scss";
 type SettingsSidebarProps = {
   width: number;
-  activePage: string,
-  setActivePage: (page: string) => void;
+  activePage: string;
 };
+
 const options = [
   {
-    name: 'Profile',
+    name: 'profile',
+    label: 'Profile',
     icon: <User/>,
+    href: '/settings/profile'
   }, 
   {
-    name: 'System Settings',
-    icon: <Settings2/>
+    name: 'system',
+    label: 'System Settings',
+    icon: <Settings2/>,
+    href: '/settings/system'
   },
   {
-    name: 'Billing',
-    icon: <CreditCard />
+    name: 'billing',
+    label: 'Billing',
+    icon: <CreditCard />,
+    href: '/settings/billing'
   },
   {
-    name: 'Pete',
-    icon: <BrainCog />
+    name: 'pete',
+    label: 'Pete',
+    icon: <BrainCog />,
+    href: '/settings/pete'
   }
-]
+];
 
 const SettingsSidebar = (props: SettingsSidebarProps) => {
-  const checkMobile = () : boolean => {
-    // Define mobile breakpoint (e.g., 768px)
-    const mobileBreakpoint = 768; // Common breakpoint for mobile devices
+  const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const router = useRouter();
 
-
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const isMobileAgent = /android|avantgo|blackberry|bada|bb10|iemobile|opera mini|opera mobi|phone|mobile|mini|wap/i.test(userAgent);
-
-    return props.width < mobileBreakpoint || isMobileAgent;
-  }
-    
-  const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false)
-  const [isMobile, setIsMobile] = useState(checkMobile())
+  useEffect(() => {
+    const mobileBreakpoint = 768;
+    setIsMobile(props.width < mobileBreakpoint);
+  }, [props.width]);
 
   return (
-    <div className="bg-gray-800 border-r-2 border-red-400 p-6 shadow-md transition-all duration-300 ease-in-out w-24 md:w-24 sm:w-24 lg:w-fit">
-      {isLeftSidebarCollapsed
-        ? <ChevronRight className='hover:text-gray-300 text-gray-500'  style={{ position: 'absolute', bottom:'2rem' }} size={32} onClick={() => setIsLeftSidebarCollapsed(false)} />
-        : 
-        <div className="flex gap-2 hover:text-gray-300 text-gray-500" style={{ position: 'absolute', bottom:'2rem' }}
-        onClick={() => setIsLeftSidebarCollapsed(true)}
-        >
-        <ChevronLeft size={32} />
-          <span className="mt-1 sm:hidden">Collapse</span>
-        </div>}
-      <div className={`${isLeftSidebarCollapsed ? 'w-8' : 'w-64'}`}>
-        {isLeftSidebarCollapsed
-          ? <div className="mt-2">
-          {options.map(x =>
-                <Button 
-                  key={x.name}
-                variant={'secondary'} 
-                  style={{marginLeft:'-0.5rem'}}
-                onClick={() => {props.setActivePage(x.name)}}
-                  className={
-                    "mb-3"
-                    +(props.activePage === x.name ? ' bg-white text-black' : ' bg-gray-700 text-white')}>
-                  {x.icon}
-
-                </Button>
-              )}
+    <TooltipProvider>
+      <aside className={`
+        sidebar
+        transition-all duration-300 ease-in-out
+        ${isLeftSidebarCollapsed ? 'w-20' : 'w-64'}
+      `}>
+          <div className="flex flex-col">
+          <div className="p-4">
+            {!isLeftSidebarCollapsed && (
+              <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
+            )}
+            <nav className="space-y-2">
+              {options.map(option => (
+                <Tooltip key={option.name}>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost"
+                      asChild
+                      className={`
+                        w-full flex items-center gap-3 px-3 py-2 transition-colors
+                        ${props.activePage === option.name 
+                          ? 'bg-white text-black hover:bg-gray-100' 
+                          : 'text-gray-300 hover:bg-gray-700 hover:text-white'}
+                      `}
+                    >
+                      <Link href={option.href}>
+                        {option.icon}
+                        {!isLeftSidebarCollapsed && <span>{option.label}</span>}
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  {isLeftSidebarCollapsed && (
+                    <TooltipContent side="right">
+                      {option.label}
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              ))}
+            </nav>
           </div>
-          : <>
-            <section>
-              <div style={{ fontSize: '20pt' }}>
-                <h1>Settings</h1>
-              </div>
-            </section>
-            <section className="mt-4">
-              {options.map(x =>
-                <Button variant={'secondary'} 
-                onMouseDown={() => {props.setActivePage(x.name)}}
-                  className={
-                    "flex flex-row w-12 lg:w-full mb-5 "
-                    +(props.activePage === x.name ? ' bg-white text-black' : ' bg-transparent border-2 text-white hover:bg-gray-700')}>
-                  {x.icon}
-                  {!isMobile && <span>{x.name}</span>}
-                </Button>
-              )}
-            </section>
 
-
-          </>}
-      </div>
-
-    </div>
-  )
-}
+          <Button
+            variant="ghost"
+            className="mt-auto mx-auto mb-4 p-2 text-gray-400 hover:text-white"
+            onClick={() => setIsLeftSidebarCollapsed(!isLeftSidebarCollapsed)}
+          >
+            {isLeftSidebarCollapsed ? <ChevronRight size={24} /> : <ChevronLeft size={24} />}
+          </Button>
+        </div>
+      </aside>
+    </TooltipProvider>
+  );
+};
 
 export default SettingsSidebar;

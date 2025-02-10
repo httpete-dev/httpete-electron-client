@@ -24,12 +24,18 @@ type HeaderProps = {
 
 const menuEntries = [
     // { title: 'Code', icon: <Code className="w-5 h-5 text-white" />, path: '/dashboard/code' },
-    { title: 'Tasks', icon: <SquareCheck className="w-5 h-5 text-white" />, path: '/dashboard/tasks' },
+    // { title: 'Tasks', icon: <SquareCheck className="w-5 h-5 text-white" />, path: '/dashboard/tasks' },
     { title: 'Documentation', icon: <File className="w-5 h-5 text-white" />, path: '/dashboard/docs' },
     { title: 'API', icon: <Globe className="w-5 h-5 text-white" />, path: '/dashboard/api-client' },
-    { title: 'Source Control', icon: <GitBranch className="w-5 h-5 text-white" />, path: '/dashboard/source-control' },
-    { title: 'Community', icon: <Users className="w-6 h-6 text-white" />, path: '/dashboard/community' },
-    { title: 'Settings', icon: <Settings className="w-5 h-5 text-white" />, path: '/settings' },
+    // { title: 'Source Control', icon: <GitBranch className="w-5 h-5 text-white" />, path: '/dashboard/source-control' },
+    // { title: 'Community', icon: <Users className="w-6 h-6 text-white" />, path: '/dashboard/community' },
+    { title: 'Settings', icon: <Settings className="w-5 h-5 text-white" />, path: '/settings/profile', 
+        routesCovered: [
+        '/settings/profile',
+        '/settings/system',
+        '/settings/billing',
+        '/settings/pete'
+    ] },
     // { title: 'Sign out', icon: <LogOutIcon className="w-6 h-6 text-white" />, path: '/sign-out' }
 ]
 
@@ -61,7 +67,7 @@ const Navbar = (props: HeaderProps) => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="bg-gray-700 text-white border-none shadow-[0_0_10px_rgba(255,127,80,0.5)]">
                                 {menuEntries.map(x =>
-                                    <DropdownMenuEntry key={x.title} title={x.title} icon={x.icon} path={x.path} />
+                                    <DropdownMenuEntry key={x.title} title={x.title} icon={x.icon} path={x.path} routesCovered={x.routesCovered} />
                                 )}
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -125,11 +131,12 @@ export default Navbar;
 type DropdownMenuEntryProps = {
     title: string,
     icon: React.ReactNode,
-    path: string
+    path: string,
+    routesCovered?: string[]
 }
 export const DropdownMenuEntry = (props: DropdownMenuEntryProps) => {
-    const currentPath = usePathname();
     const router = useRouter();
+    const currentPath = router.pathname;
 
     return (
         <DropdownMenuItem onClick={() => {
@@ -139,14 +146,18 @@ export const DropdownMenuEntry = (props: DropdownMenuEntryProps) => {
             }
 
             router.push(props.path)
-        }
-        }>
-            <div className={'rounded-sm w-full flex p-2' + (currentPath === props.path ? ' bg-red-400' : ' bg-slate-600')}>
+        }}>
+            <div className={`rounded-sm w-full flex p-2${
+                currentPath === props.path 
+                || (props.routesCovered && props.routesCovered.includes(currentPath))
+                ? ' bg-red-400' 
+                : ' bg-slate-600'
+            }`}>
                 {props.icon}
                 <span className="px-2">
                     {props.title}
                 </span>
             </div>
         </DropdownMenuItem>
-    )
-}
+    );
+};

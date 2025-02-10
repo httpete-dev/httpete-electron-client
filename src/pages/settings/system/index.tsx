@@ -6,7 +6,11 @@ import { Tooltip } from '@radix-ui/react-tooltip'
 import { TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-
+import { Input } from '@/components/ui/input'
+import { OAuthBtn } from '@/components/GoogleBtn'
+import { GoogleIcon } from '@/components/icons/bitbucket'
+import { Button } from '@/components/ui/button'
+import SettingsLayout from '@/layouts/SettingsLayout'
 export default function SystemSettingsPage() {
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -49,6 +53,7 @@ export default function SystemSettingsPage() {
 
 
   return (
+    <SettingsLayout>
     <form onSubmit={handleSubmit} className="w-full p-8 space-y-8">
       <div className="bg-gray-800 p-6 rounded-lg">
         <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
@@ -262,11 +267,11 @@ export default function SystemSettingsPage() {
           </div>
           <div>
                 <OAuthBtn
-                  disabled={true}
-                  click={() => {}}
-                  provider='google'
-                  icon={<GoogleIcon size={5}/>}
-                  text={session?.user.oAuthProviders.indexOf('google') !== -1 ? "Disconnect Google" : 'Connect Google Account'} />
+              disabled={true}
+              click={() => { } }
+              provider='google'
+              icon={<GoogleIcon size={5} />} text={''}></OAuthBtn>
+                  
           </div>
         </div>
       </div>
@@ -275,6 +280,7 @@ export default function SystemSettingsPage() {
         <Button type="submit" className="bg-red-950 hover:bg-red-500">Save Changes</Button>
       </div>
     </form>
+    </SettingsLayout>
   )
 }
 

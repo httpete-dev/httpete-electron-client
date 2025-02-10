@@ -3,12 +3,13 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import remarkGfm from 'remark-gfm'
 import { Button } from "@/components/ui/button"
 import { Bold, Italic, List, ListOrdered, Code, LinkIcon, Eye, Edit, Columns, FileJson2Icon, FileJson, Save } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Doc, Endpoint } from '@/model'
+import { EndpointDocumentation, GeneralDocument } from '@/types/document'
+import { Endpoint } from '@/types/api'
 import "@/styles/documentation.scss"
 
 type ViewMode = 'edit' | 'preview' | 'both'
